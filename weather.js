@@ -22,10 +22,20 @@ $("#search-button").on("click", function(event) {
         $("#temp").text(temp);
 
         // FIND UV INDEX IN DIFFERENT AJAX CALL
-        $("#uvIndex").text(uvIndex);
+        var APIKey = "4acc1684606b5c94bad30135c751d96e";  
+      var queryURL = "http://api.openweathermap.org/data/2.5/uvi?appid={4acc1684606b5c94bad30135c751d96e}" 
+      $.ajax({
+          url: queryURL,
+          method: "GET"
+      }).then(function(response) {
+          console.log(queryURL)
+          console.log(response)
+          var uvIndex = 
+          $("#uvIndex").text(uvIndex);
+      
     });
-
+    })
 
     // FOR FIVE DAY FORECAST
+    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + APIKey;
 });
-
