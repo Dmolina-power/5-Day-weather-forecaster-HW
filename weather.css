@@ -4,6 +4,22 @@
     margin-bottom: 0px;
 }   
 
+.font-weight-bold{
+    padding-right: 30px;
+    
+}
 
+#temp{
+    margin-bottom: 10px;
+    font-weight: bold;
+}
 
+#humidity{
+    margin-bottom: 10px;
+    font-weight: bold;
+}
 
+#wind{
+    margin-bottom: 10px;
+    font-weight: bold;
+}
