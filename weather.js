@@ -1,87 +1,158 @@
-$("#search-button").on("click", function(event) {
-    event.preventDefault();
-    var cityName = $("#search-input").val();
-    var currentDay = moment().format("MMMM Do YYYY");
+$(document).ready(function () {
+  var apikey = "4acc1684606b5c94bad30135c751d96e";
+  $("#searchbtn").on("click", function (event) {
+    var searchValue = $("#search-input").val();
+    $("#search-input").val("");
+    searchWeather(searchValue);
+  });
 
-    // FOR CURRENT FORECAST
-    var APIKey = "4acc1684606b5c94bad30135c751d96e";
-    var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&APPID=" + APIKey;
+  $(".history").on("click", "li", function () {
+    searchWeather($(this).text());
+  });
+
+  function makeRow(text) {
+    var li = $("<li>").addClass("list-group-item list-group-item-action").text(text);
+    $(".history").append(li);  
+  }    
+    
+  function searchWeather(searchValue) {
     $.ajax({
-        url: queryURL,
-        method: "GET"
-    }).then(function(response) {
-        console.log(queryURL)
-        console.log(response)
-        var city = response.name
-        var wind = response.wind.speed
-        var humidity = response.main.humidity
-        var temp = Math.round((response.main.temp-273.15) * 1.80 + 32);
-        
-        $("#city").text(city);
-        $("#wind").text("wind speed:" + wind);
-        $("#humidity").text("Humidity:" + humidity);
-        $("#temp").text("Tempeture:" + temp);
-        
+      type: "GET",
+      url:"https://api.openweathermap.org/data/2.5/weather?q=" + searchValue + "&appid=" + apikey + "&units=imperial",
+      dataType: "json",
+      success: function (data) {
+        if (history.indexOf(searchValue) === -1) {
+          history.push(searchValue);
+          window.localStorage.setItem("history", JSON.stringify(history));
+          makeRow(searchValue);
+        }  
+        $("#weathernow").empty();
 
-        // FIND UV INDEX IN DIFFERENT AJAX CALL
-         
-      var queryURL2 = "http://api.openweathermap.org/data/2.5/uvi?appid=" + APIKey + "&lat=" + response.coord.lat + "&lon=" + response.coord.lon;
-      $.ajax({
-          url: queryURL2,
-          method: "GET"
-      }).then(function(response) {
-          console.log(queryURL2)
-          console.log(response)
-          var uvIndex = response.value 
-          $("#uvIndex").text("uv-Index:" + uvIndex);
+        var title = $("<h3>").addClass("card-title").text(data.name + " (" + new Date().toLocaleDateString() + ")");
+        var card = $("<div>").addClass("card");  
+        var wind = $("<p>").addClass("card-text").text("Wind Speed: " + data.wind.speed + "MPH");  
+        var humid = $("<p>").addClass("card-text").text("Humidity: " + data.main.humidity + "%");
+        var temp = $("<p>").addClass("card-text").text("Temperature: " + data.main.temp + "°F");
+        var cardBody = $("<div>").addClass("card-body");  
+        var img = $("<img>").attr("src","http://openweathermap.org/img/w/" + data.weather[0].icon + ".png");  
+        
+       title.append(img);
+        cardBody.append(title, temp, humid, wind);
+        card.append(cardBody);
+        $("#weathernow").append(card);
+
+        getForecast(searchValue);
+        getUVIndex(data.coord.lat, data.coord.lon);
+      }
+    });      
+  }  
+  
+
       
-    });
-    })
-
-    // FOR FIVE DAY FORECAST
-
-    var queryURL3 = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + APIKey;
+        
+ function getForecast(searchValue) {
     $.ajax({
-        url: queryURL3,
-        method: "GET"
-    }).then(function(response) {
-        console.log(queryURL3)
-        console.log(response)
-        console.log(response.list[0].main.temp);
-        $("temp-1").text("tempeture:" + temp);
-
-        // Want to store the temperatures based on moment.js
-        // So we need the current day and current hour
-        var day1 = moment().add(1, 'd').format("MMMM Do YYYY");
-        console.log(day1);
-        var currentHour = moment().format("HH");
-        console.log(currentHour);
-
-        var j = 0;
-        for (var i = 0; i < 5; i++) {
-            // if currentHour is 0-2, then what list indexes are we using? 7, 15, 23, 31, 39
-            if (currentHour >= 0 && currentHour < 3) {
-                var element = response.list[j + 7];
-                console.log(element);
-            }
-
-            if (currentHour >= 15 && currentHour < 18) {
-                var element = response.list[j + 4];
-                console.log(element);
-                j = j+8;
-            }
-            // if currentHour is 3-5, then you do 0, 8, 16, 24, 32
-            //var element = response.list[j+8];
+      type: "GET",
+      url:"https://api.openweathermap.org/data/2.5/forecast?q=" + searchValue + "&appid=" + apikey + "&units=imperial",
+      dataType: "json",  
+        
+     success: function (data) {
+        $("#forecast").html('<h5 class="mt-3"> 5-Day Forecast:</h5>').append('<div class="row">');
+          
+       for (var i = 0; i < data.list.length; i++) {
+          if (data.list[i].dt_txt.indexOf("15:00:00") !== -1) {
+            var col = $("<div>").addClass("col-md-2");
+            var card = $("<div>").addClass("card  text-white");
+            var body = $("<div>").addClass("card-body");
+            var title = $("<h5>").addClass("card-title").text(new Date(data.list[i].dt_txt).toLocaleDateString());
+            var img = $("<img>").attr("src","http://openweathermap.org/img/w/" + data.list[1].weather[0].icon + ".png" );
+            var p1 = $("<p>").addClass("card-text").text("Temp: " + data.list[i].main.temp_max + "°F");
+            var p2 = $("<p>").addClass("card-text").text("humidity: " + data.list[i].main.humidity + "%");
+              
+            col.append(card.append(body.append(title, img, p1, p2)));  
+            $("#forecast .row").append(col);
+          }
+        }    
+     },         
+    });          
+ }               
+                
+  function getUVIndex(lat, lon) {
+    $.ajax({
+      type: "GET",
+      url:"https://api.openweathermap.org/data/2.5/uvi?appid=d902a298fbf27783a3efb9503fa1c23a&lat=" + lat + "&lon=" + lon,
+      dataType: "json",  
+        
+      success: function (data) {
+        var uv = $("<p>").text("UV Index: ");
+        var btn = $("<span>").addClass("btn btn-sm").text(data.value);
+        
+        if (data.value < 3) {
+          btn.addClass("btn-success");
+        } else if (data.value < 7) {
+          btn.addClass("btn-warning");
+        } else {
+          btn.addClass("btn-danger");
         }
-        // 0-3, 3-6, 6-9, 9-12, 12-15, 15-18, 18-21, 21-24
-        // another way: see if something like "15:00:00" is in response.list[i].dt_txt using indexOf
-    });
+        $("#weathernow .card-body").append(uv.append(btn));
+      },  
+    });    
+  }    
+      
+  var history = JSON.parse(window.localStorage.getItem("history")) || [];  
+  if (history.length > 0) {
+  searchWeather(history[history.length - 1]);
+  }
+  for (var i = 0; i < history.length; i++) {
+    makeRow(history[i]);
+  }
+});     
+  
+  
+        
 
+            
+              
+              
 
+            
+              
+              
 
+            
+            
+           
 
+        
+        
+      
+    
+              
+        
+      
+      
+          
+        
+        
+          
+          
+        
+        
 
+        
+        
 
+        
+        
+        
+  
 
-
-});
+  
+  
+  
+     
+        
+        
+        
+        
+      

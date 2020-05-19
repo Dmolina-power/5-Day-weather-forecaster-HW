@@ -1,25 +1,57 @@
 .jumbotron{
+    background-image: url(https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60);
+    background-attachment: fixed;
+      background-position: fixed;
+      background-repeat: no-repeat;
+      background-size: cover;
     padding-bottom: 30px;
     padding-top: 30px;
     margin-bottom: 0px;
 }   
 
-.font-weight-bold{
-    padding-right: 30px;
+body {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background-image: url(https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60);
+    background-attachment: fixed;
+      background-position: fixed;
+      background-repeat: no-repeat;
+      background-size: cover;
+    font-size: 25px;
+    margin: 0;
+    padding: 0;
+
+}
+
+.container-fluid{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.card-body{
+    color: ivory;
+  padding-left: 0px;
+  padding-right: 0px;
+background-color: black;
+  
+  
+}
+  
+#forecast{
+    margin-left: 50px;
+    opacity: .5;
+}
     
+
+
+.col{
+    background-color: black;
+    opacity: .5;
 }
 
-#temp{
-    margin-bottom: 10px;
-    font-weight: bold;
+.col-lg-9{
+    opacity: .7;
 }
 
-#humidity{
-    margin-bottom: 10px;
-    font-weight: bold;
-}
 
-#wind{
-    margin-bottom: 10px;
-    font-weight: bold;
-}
+
+
