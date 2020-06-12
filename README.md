@@ -1,7 +1,4 @@
-# 5-Day-weather-forecaster-HW
-Welcome to the Weather Dashboard. In the search bar look up cities and see the current weather forecast and the 5 day forecast.
 
-frameworks used, HTML,CSS, JavaScript, as well as bootstrap and jquery.
 
 ![GitHub followers](https://img.shields.io/github/followers/dmolina-power) 
   ![GitHub repo size](https://img.shields.io/github/repo-size/dmolina-power/5-Day-weather-forecaster-HW) 
